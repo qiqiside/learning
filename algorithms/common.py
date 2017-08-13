@@ -21,3 +21,5 @@ def sort(l):
 def clone(o):
     return copy.deepcopy(o)
 
+def br():
+    print ('-' * 80)
