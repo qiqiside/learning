@@ -73,3 +73,55 @@ def draw_tree(label, A):
     treeGraph = TreeGraph(A)
     treeGraph.draw()
 
+
+class RedBlackTreeGraph:
+
+    def __init__(self, tree):
+        self.tree = tree
+
+        self.G = graphviz.Graph()
+
+    def node(self, node):
+        if node.color == node.RED:
+            color = 'red'
+        else:
+            color = 'black'
+
+        self.G.node(str(id(node)), label = str(node), color = color, style = 'filled', fontcolor = 'white')
+
+    def edge(self, node1, node2):
+        self.G.edge(str(id(node1)), str(id(node2)))
+
+    def walk(self, x = None):
+        if x == None:
+            x = self.tree.root
+
+        if x == self.tree.nil:
+            return
+
+        self.node(x)
+
+        if x.left != self.tree.nil:
+            self.node(x.left)
+            self.edge(x, x.left)
+
+            self.walk(x.left)
+        
+        if x.right != self.tree.nil:
+            self.node(x.right)
+            self.edge(x, x.right)
+
+            self.walk(x.right)
+
+    def draw(self):
+        self.walk()
+        display(self.G)
+        
+
+def draw_rbtree(label, A):
+    if label != None and label != '':
+        print(label)
+
+    treeGraph = RedBlackTreeGraph(A)
+    treeGraph.draw()
+
