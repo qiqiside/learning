@@ -8,6 +8,18 @@ def gen_data(num, min=10, max=1000):
         data.append(random.randint(min, max))
     return data
 
+def verify_sorted(sorted_data):
+    sys_sorted_data = sort(sorted_data)
+    
+    if len(sys_sorted_data) != len(sorted_data):
+        return False
+    
+    for i in range(len(sorted_data)):
+        if sorted_data[i] != sys_sorted_data[i]:
+            return False
+    
+    return True
+    
 def shuffle(l):
     l = clone(l)
     random.shuffle(l)
