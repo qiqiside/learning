@@ -78,5 +78,8 @@ class Sort(object):
             self.sort(data)
             draw_array(data)
 
-            print('  verify = ' + str(is_sorted(data)) + '\n\n\n')
+            passed = is_sorted(data)
+            print('  verify = ' + str(passed) + '\n\n\n')
 
+            if not passed:
+                break
