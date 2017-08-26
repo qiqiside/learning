@@ -1,0 +1,4 @@
+.ipynb_checkpoints/
+*.gv
+*.pdf
+__pycache__

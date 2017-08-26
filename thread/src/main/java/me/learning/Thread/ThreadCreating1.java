@@ -19,7 +19,14 @@ public class ThreadCreating1 {
     public void t() throws InterruptedException {
         Lamb lamb = new Lamb("a lamb");
         lamb.start();
-        lamb.join();
+        Common.join();
+    }
+
+    public static void main(String[] args) {
+        ThreadCreating1 threadCreating1 = new ThreadCreating1();
+        Lamb lamb = threadCreating1.new Lamb("a lamb");
+        lamb.start();
+        Common.join();
     }
 
 }
