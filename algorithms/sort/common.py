@@ -69,10 +69,13 @@ class Sort(object):
             self.init(A, 0, len(A) - 1)
         
         return self._sort()
-            
-    def verify(self, num = 10):
-        for x in range(num + 1):
-            data = gen_data(x)
+    
+    def gen_data(self, x):
+        return gen_data(x)
+    
+    def verify(self, num = 10, start = 0):
+        for x in range(start, start + num + 1):
+            data = self.gen_data(x)
             draw_array(data)
             
             self.sort(data)
