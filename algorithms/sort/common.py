@@ -53,21 +53,27 @@ class Sort(object):
     def __init__(self, A = []):
         self.init(A, 0, len(A) - 1)
     
-    def init(self, A, start, end):
+    def init(self, A, start = None, end = None):
         self.A = A
-        self.start = 0
-        self.end = len(self.A) - 1
+        
+        if start is None:
+            start = 0
+           
+        if end is None:
+            end = len(A) - 1
+            
+        self.A = A
+        self.start = start
+        self.end = end
         
     @abstractmethod
     def _sort(self):
         pass
     
-    def sort(self, A = [], start = None, end = None):
-        if start is not None and end is not None:
+    def sort(self, A = None, start = None, end = None):
+        if A is not None:
             self.init(A, start, end)
-        elif A is not None:
-            self.init(A, 0, len(A) - 1)
-        
+            
         return self._sort()
     
     def gen_data(self, x):
