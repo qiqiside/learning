@@ -15,11 +15,10 @@ def clone(o):
     return copy.deepcopy(o)
 
 
-class Vector(object):
+class Vertex(object):
 
-    def __init__(self, v, weight = None):
+    def __init__(self, v):
         self.v = v
-        self.weight = weight
         self.next = None
 
     def __str__(self):
@@ -29,17 +28,51 @@ class Vector(object):
         return self.__str__()
 
 
-class Edge(Vector):
+class Edge(object):
 
     def __init__(self, v, weight = None):
-        super(Edge, self).__init__(v, weight)
+        self.v = v
+        self.next = None
 
+        self.weight = weight
 
+    def __str__(self):
+        return str(self.v)
+
+    def __repr__(self):
+        return self.__str__()
+
+        
 class Graph(object):
     
     __metaclass__ = ABCMeta
     
+    @abstractmethod
+    def findV(self, v):
+        pass
+    
+    @abstractmethod
+    def findE(self, v0, v1):
+        pass
+
+    @abstractmethod
+    def addV(self, v):
+        pass
+    
+    @abstractmethod
+    def addE(self, v0, v1, weight = None):
+        pass
+    
+    @abstractmethod
+    def draw(self, withDirection = True, withWeight = False):            
+        pass
+    
+    
+class SparseGraph(Graph):
+    # using adjacent list
+    
     def __init__(self):
+        super(SparseGraph, self).__init__()
         self.V = {}
 
     def findV(self, v):
@@ -63,7 +96,7 @@ class Graph(object):
 
     def addV(self, v):
         if v not in self.V:
-            self.V[v] = Vector(v)
+            self.V[v] = Vertex(v)
 
         return self.V[v]
         
@@ -86,7 +119,6 @@ class Graph(object):
             edge.next = p.next
             p.next = edge
 
-
     def __str__(self):
         text = ''
 
@@ -106,9 +138,8 @@ class Graph(object):
 
         return text
 
-    def draw(self, with_direction = True):
-            
-        if with_direction:
+    def draw(self, withDirection = True, withWeight = False):            
+        if withDirection:
             G = graphviz.Digraph()
         else:
             G = graphviz.Graph()
@@ -119,9 +150,96 @@ class Graph(object):
 
             n = v.next
             while n is not None:
-                G.edge(str(v), str(n))
+                if withWeight:
+                    G.edge(str(v), str(n), str(n.weight))
+                else:
+                    G.edge(str(v), str(n))
 
                 n = n.next
             
         display(G)
 
+
+class DenseGraph(Graph):
+    # using adjacent matrix
+    # 0 <= vertex.v < maxNodeNum
+    
+    def __init__(self, maxNodeNum):
+        super(DenseGraph, self).__init__()
+        
+        self.N = maxNodeNum        
+        self.V = []
+        for x in range(maxNodeNum):
+            self.V.append([ None ] * maxNodeNum)
+
+    def findV(self, v):
+        return self.V[v][v]
+
+    def findE(self, v0, v1):
+        return self.V[v0.v][v1.v]
+
+    def addV(self, v):
+        if v < 0 or v >= self.N:
+            raise Exception('the vertex value is out of range')
+
+        vertex = Vertex(v)
+        self.V[v][v] = vertex
+        
+        return vertex
+        
+    def addE(self, v0, v1, weight = None):
+        if v0 < 0 or v0 >= self.N:
+            raise Exception('the vertex value of v0 is out of range')
+
+        if v1 < 0 or v1 >= self.N:
+            raise Exception('the vertex value of v1 is out of range')
+
+        edge = Edge(v1, weight)
+        self.V[v0][v1] = edge
+
+    def __str__(self):
+        text = ''
+
+        for x in range(self.N):
+            for y in range(self.N):
+                if y > 0:
+                    text += ', '
+                text += str(self.V[x][y])
+            text += '\n'
+
+        if text != '':
+            text += '\n'
+            
+        return text
+
+    def draw(self, withDirection = True, withWeight = False):            
+        G = graphviz.Digraph('structs', node_attr = { 'shape': 'plaintext' })
+
+        s = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">'
+
+        s += '<TR><TD> </TD>'
+        for x in range(self.N):
+            s += '<TD>v%s</TD>' % str(x)
+        s += '</TR>'
+        
+        for x in range(self.N):
+            s += '<TR><TD>v%s</TD>' % str(x)
+            
+            for y in range(self.N):
+                v = self.V[x][y]
+                
+                if v is None:
+                    s += '<TD> </TD>'
+                else:
+                    if not withWeight or x == y:
+                        s += '<TD>%s</TD>' % str(self.V[x][y])
+                    else:
+                        s += '<TD>%s (w: %s)</TD>' % (str(self.V[x][y]), str(self.V[x][y].weight))
+            s += '</TR>'
+        
+        s += '</TABLE>>'
+
+        G.node('struct1', s)
+        display(G)
+
+                
