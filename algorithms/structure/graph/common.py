@@ -114,6 +114,7 @@ class SparseGraph(Graph):
             p = p.next
 
         if p is None:
+            edge.next = v0.next
             v0.next = edge
         else:
             edge.next = p.next
@@ -150,6 +151,11 @@ class SparseGraph(Graph):
 
             n = v.next
             while n is not None:
+                if not withDirection:
+                    if n.v > v.v and self.findE(n, v) != None:
+                        n = n.next
+                        continue
+                    
                 if withWeight:
                     G.edge(str(v), str(n), str(n.weight))
                 else:
